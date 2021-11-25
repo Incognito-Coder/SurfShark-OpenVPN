@@ -3,6 +3,7 @@ import urllib.request as API
 import zipfile
 import re
 import socket
+import shutil
 os.system('title SurfShark OVPN Merger By Incognito Coder')
 os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -29,7 +30,7 @@ print(f'{colors.OKCYAN}\n'
       f'{colors.HEADER}[+] This is a fork from SurfSocks project by Incognito Coder.{colors.ENDC}')
 print("[+] ABOUT SCRIPT:")
 print("[-] With this script, you can save U/P to openvpn configs and convert hostname to ip.")
-print("[-] Version: 1.0")
+print("[-] Version: 1.1")
 print("--------")
 print("[-] SITE: mr-incognito.ir")
 print("[-] TELEGRAM: @ic_mods")
@@ -74,6 +75,8 @@ def runner():
                 print(
                     f'{colors.OKGREEN}[?]{colors.ENDC} {file} {colors.OKGREEN}Merged Successfully.{colors.ENDC}')
             compress.write('configs/'+file)
+        print(f'{colors.BOLD}[!] Cleaning workspace.{colors.ENDC}')
+        shutil.rmtree(os.getcwd() + '/configs/')
         print(
             f'{colors.OKBLUE}[$] Files Saved as {colors.ENDC}Merged-Configs.zip')
 
