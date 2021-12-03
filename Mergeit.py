@@ -37,7 +37,7 @@ def Main():
           f'{colors.ENDC}\n'
           f'{colors.HEADER}[+] This is a fork from SurfSocks project by Incognito Coder.{colors.ENDC}\n'
           '[+] ABOUT SCRIPT:\n'
-          '[-] With this script, you can save U/P to openvpn configs and convert hostname to ip.\n'
+          '[-] With this script, you can save U/P to openvpn configs and convert hostname to ip\n'
           '[-] Version: 1.4\n'
           '--------\n'
           '[-] SITE: mr-incognito.ir\n'
