@@ -5,6 +5,8 @@ import re
 import socket
 import shutil
 import time
+import json
+import subprocess
 from configparser import ConfigParser
 import webbrowser
 os.system('title SurfShark OVPN Merger By Incognito Coder')
@@ -38,7 +40,7 @@ def Main():
           f'{colors.HEADER}[+] This is a fork from SurfSocks project by Incognito Coder.{colors.ENDC}\n'
           '[+] ABOUT SCRIPT:\n'
           '[-] With this script, you can save U/P to openvpn configs and convert hostname to ip\n'
-          '[-] Version: 1.4\n'
+          '[-] Version: 2.3\n'
           '--------\n'
           '[-] SITE: mr-incognito.ir\n'
           '[-] TELEGRAM: @ic_mods\n'
@@ -113,17 +115,34 @@ def runner():
         with open(os.getcwd()+'/configs/'+file, 'r') as f:
             data = f.read()
             regex = re.compile("remote (.*?) ").search(data)
+            ip = socket.gethostbyname(regex.group(1))
             data = data.replace(regex.group(
-                1), socket.gethostbyname(regex.group(1)))
+                1), ip)
             merged = data + \
                 f"<auth-user-pass>\n{username}\n{password}\n</auth-user-pass>"
             f.close()
-        with open(os.getcwd()+'/configs/'+file, 'w') as f:
-            f.write(merged)
-            f.close()
+        try:
+            ping = PingDelay(ip)
+            with open(os.getcwd() + '/configs/' + file, 'w') as f:
+                f.write(merged)
+                f.close()
+                print(
+                    f'{colors.OKGREEN}[?]{colors.ENDC} {file} {colors.OKGREEN}Merged Successfully.{colors.ENDC} | Response : {colors.OKBLUE}{ping}{colors.ENDC}')
+            time.sleep(2)
+            JData = json.loads(API.urlopen(
+                f'http://ip-api.com/json/{ip}').read())
+            new_name = f"{JData['country']} - {JData['city']} ({ip}).ovpn"
+            proto = re.compile(r"proto (.*)").search(merged)
+            if proto.group(1) == 'udp':
+                compress.write('configs/'+file, 'UDP/'+new_name)
+            else:
+                compress.write('configs/'+file, 'TCP/'+new_name)
+
+        except:
             print(
-                f'{colors.OKGREEN}[?]{colors.ENDC} {file} {colors.OKGREEN}Merged Successfully.{colors.ENDC}')
-        compress.write('configs/'+file)
+                f'{colors.FAIL}[?] {file} Invalid Hostname or Server is Down.{colors.ENDC}')
+            os.remove(os.getcwd() + '/configs/' + file)
+
     print(f'{colors.BOLD}[!] Cleaning workspace.{colors.ENDC}')
     shutil.rmtree(os.getcwd() + '/configs/')
     print(
@@ -160,6 +179,19 @@ def ClearUP():
     time.sleep(1)
     os.system('cls' if os.name == 'nt' else 'clear')
     Main()
+
+
+def PingDelay(host):
+    if os.name == 'nt':
+        time = subprocess.Popen(
+            ['ping', host, '-n', '1'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        output = time.communicate()
+    else:
+        time = subprocess.Popen(
+            ['ping', host, '-c', '1'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        output = time.communicate()
+    pattern = re.findall(r"Average = (\d+\S+)", output[0].decode())[0]
+    return pattern
 
 
 Main()
