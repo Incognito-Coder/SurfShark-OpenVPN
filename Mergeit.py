@@ -186,11 +186,12 @@ def PingDelay(host):
         time = subprocess.Popen(
             ['ping', host, '-n', '1'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         output = time.communicate()
+        pattern = re.findall(r"Average = (\d+\S+)", output[0].decode())[0]
     else:
-        time = subprocess.Popen(
-            ['ping', host, '-c', '1'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        output = time.communicate()
-    pattern = re.findall(r"Average = (\d+\S+)", output[0].decode())[0]
+        ping_response = subprocess.Popen(
+            ["ping", "-c1", "google.com"], stdout=subprocess.PIPE).stdout.read()
+        rexex = re.compile('time=(.*?) ms').search(str(ping_response)).group(1)
+        pattern = rexex+'ms'
     return pattern
 
 
