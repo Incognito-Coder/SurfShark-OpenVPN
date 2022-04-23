@@ -19,6 +19,8 @@ cd SurfShark-OpenVPN
 python Mergeit.py
 ```
 
+![Screenshot](https://raw.githubusercontent.com/Incognito-Coder/SurfShark-OpenVPN/master/img/main.png "Application")
+
 __Cant run it? use repl.it__ [on Repl.it](https://replit.com/@Incognito-Coder/SurfShark-OpenVPN) \
 If you want to use php version run this [Gist](https://gist.github.com/Incognito-Coder/5e44df201322081739a1eb97dcec4ce2)
 
