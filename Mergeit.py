@@ -1,4 +1,5 @@
 import os
+import sys
 import urllib.request as API
 import zipfile
 import re
@@ -40,7 +41,7 @@ def Main():
           f'{colors.HEADER}[+] This is a fork from SurfSocks project by Incognito Coder.{colors.ENDC}\n'
           '[+] ABOUT SCRIPT:\n'
           '[-] With this script, you can save U/P to openvpn configs and convert hostname to ip\n'
-          '[-] Version: 2.3\n'
+          '[-] Version: 2.5\n'
           '--------\n'
           '[-] SITE: mr-incognito.ir\n'
           '[-] TELEGRAM: @ic_mods\n'
@@ -54,7 +55,17 @@ def Main():
           f'{colors.ENDC}\n')
     opt = input('Select an option: ')
     if opt == '1':
-        runner()
+        print(f'{colors.HEADER}'
+              '[1] Credentials in config ( Recommended for OpenVPN Connect and +v3)\n'
+              '[2] Legacy Auth ( Suitable for OpenVPN-GUI and all v2.5 clients)'
+              f'{colors.ENDC}\n')
+        global sec_opt
+        sec_opt = input('Choose Auth method: ')
+        if sec_opt == '1' or sec_opt == '2':
+            runner()
+        else:
+            print('Undefined option.Exiting ...')
+            sys.exit(1)
     elif opt == '2':
         SaveUP()
     elif opt == '3':
@@ -118,8 +129,12 @@ def runner():
             ip = socket.gethostbyname(regex.group(1))
             data = data.replace(regex.group(
                 1), ip)
-            merged = data + \
-                f"<auth-user-pass>\n{username}\n{password}\n</auth-user-pass>"
+            if sec_opt == '1':
+                merged = data + \
+                    f"<auth-user-pass>\n{username}\n{password}\n</auth-user-pass>"
+            else:
+                merged = data.replace(
+                    'auth-user-pass', 'auth-user-pass creds.txt')
             f.close()
         try:
             ping = PingDelay(ip)
@@ -137,12 +152,14 @@ def runner():
                 compress.write('configs/'+file, 'UDP/'+new_name)
             else:
                 compress.write('configs/'+file, 'TCP/'+new_name)
-
         except:
             print(
                 f'{colors.FAIL}[?] {file} Invalid Hostname or Server is Down.{colors.ENDC}')
             os.remove(os.getcwd() + '/configs/' + file)
-
+    if sec_opt == '2':
+        open(os.getcwd()+'/creds.txt',
+             'w').write(f'{username}\n{password}')
+        compress.write('creds.txt', 'creds.txt')
     print(f'{colors.BOLD}[!] Cleaning workspace.{colors.ENDC}')
     shutil.rmtree(os.getcwd() + '/configs/')
     print(
